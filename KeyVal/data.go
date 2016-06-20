@@ -52,31 +52,41 @@ func Create(key string, value string){
 	tx.Commit()
 }
 
-func update(key string, newValue string){
+func Update(key string, newValue string){
 	db, err := sql.Open("sqlite3", "./KeyVal.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
-	tx, err := db.Begin()
-	if err != nil {
-		log.Fatal(err)
-	}
-	stmt, err := tx.Prepare("update KeyVal set value = ? where key = ?")
+	stmt, err := db.Prepare("update KeyVal set value = ? where key = ?")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(key, newValue)
+	_, err = stmt.Exec(newValue, key)
 	if err != nil {
 		log.Fatal(err)
 	}
-	tx.Commit()
+
 }
 
-func delete(){
+func Delete(key string){
+	db, err := sql.Open("sqlite3", "./KeyVal.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
+	stmt, err := db.Prepare("delete from KeyVal where key = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(key)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func Get(key string) KeyValData{

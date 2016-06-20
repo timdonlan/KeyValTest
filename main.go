@@ -14,7 +14,16 @@ func main() {
 	KeyVal.Create("world","hello")
 
 	data := KeyVal.Get("hello")
-	fmt.Printf("%s",data.Val)
+	fmt.Printf("Hello: %s\n",data.Val)
+
+	KeyVal.Update("hello","world2")
+	data = KeyVal.Get("hello")
+	fmt.Printf("Hello: %s\n",data.Val)
+
+	KeyVal.Delete("hello")
+
+	data = KeyVal.Get("hello")
+	fmt.Printf("Hello: %s\n",data.Val)
 }
 
 func testSQLLite(){
