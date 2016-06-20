@@ -13,17 +13,17 @@ func main() {
 	KeyVal.Create("hello", "world")
 	KeyVal.Create("world","hello")
 
-	data := KeyVal.Get("hello")
-	fmt.Printf("Hello: %s\n",data.Val)
+	data := KeyVal.GetX("hello")
+	fmt.Printf("Hello: %s\n",data.Value)
 
 	KeyVal.Update("hello","world2")
-	data = KeyVal.Get("hello")
-	fmt.Printf("Hello: %s\n",data.Val)
+	data = KeyVal.GetX("hello")
+	fmt.Printf("Hello: %s\n",data.Value)
 
 	KeyVal.Delete("hello")
 
-	data = KeyVal.Get("hello")
-	fmt.Printf("Hello: %s\n",data.Val)
+	data = KeyVal.GetX("hello")
+	fmt.Printf("Hello: %s\n",data.Value)
 }
 
 func testSQLLite(){

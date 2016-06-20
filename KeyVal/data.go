@@ -1,15 +1,17 @@
 package KeyVal
 
 import (
-	"os"
 	"database/sql"
 	"log"
+	"os"
+	"github.com/jmoiron/sqlx"
 )
 
 type KeyValData struct{
 	Key string
-	Val string
+	Value string
 }
+
 
 func Setup(){
 	os.Remove("./KeyVal.db")
@@ -28,6 +30,7 @@ func Setup(){
 		return
 	}
 }
+
 
 func Create(key string, value string){
 	db, err := sql.Open("sqlite3", "./KeyVal.db")
@@ -89,7 +92,31 @@ func Delete(key string){
 	}
 }
 
-func Get(key string) KeyValData{
+func GetX(key string) KeyValData {
+
+	var retval KeyValData
+
+	//var db *sqlx.DB
+	db,err := sqlx.Open("sqlite3", "./KeyVal.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	rows, err := db.Queryx("select key,value from KeyVal where key = ?", key)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.StructScan(&retval)
+	}
+	return retval
+
+}
+
+func Get(key string) KeyValData {
 
 	var retval KeyValData
 
@@ -99,7 +126,7 @@ func Get(key string) KeyValData{
 	}
 	defer db.Close()
 
-	rows, err := db.Query("select value from KeyVal where key = ?",key)
+	rows, err := db.Query("select value from KeyVal where key = ?", key)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -112,8 +139,8 @@ func Get(key string) KeyValData{
 			log.Fatal(err)
 		}
 		retval.Key = key
-		retval.Val = value
+		retval.Value = value
 	}
 
-return retval
+	return retval
 }
