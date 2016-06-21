@@ -53,7 +53,7 @@ func getAllKeyVals(c *gin.Context){
 func createKeyVal(c *gin.Context){
 	var newKeyVal model.KeyValData
 
-	if c.Bind(&newKeyVal) == nil {
+	if c.BindJSON(&newKeyVal) == nil {
 		keyValData, err := model.CreateKeyVal(newKeyVal.Key, newKeyVal.Value)
 		if (err != nil) {
 			c.JSON(500, gin.H{"error":err})

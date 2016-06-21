@@ -12,10 +12,10 @@ func main() {
 
 	dbName := "KeyVal.db"
 
-	model.ResetDB(dbName)
+	//model.ResetDB(dbName)
 	model.InitDB(dbName)
-	model.CreateKeyVal("hello", "world")
-	model.CreateKeyVal("world2", "hello2")
+	//model.CreateKeyVal("hello", "world")
+	//model.CreateKeyVal("world2", "hello2")
 	router.StartService()
 
 }

@@ -48,41 +48,43 @@ func GetKeyVal(key string) (*KeyValData, error){
 func CreateKeyVal(key string, value string) (*KeyValData, error){
 	stmt, err := db.Prepare("insert into KeyVal(key, value) values(?, ?)")
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return nil,err
 	}
 	defer stmt.Close()
 	_, err = stmt.Exec(key, value)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return nil,err
 	}
 
-	return &KeyValData{key,value},err
+	return &KeyValData{key,value},nil
 }
 
 func UpdateKeyVal(key string, newValue string) (*KeyValData, error){
 	stmt, err := db.Prepare("update KeyVal set value = ? where key = ?")
 	if err != nil {
-		log.Fatal(err)
+		return nil,err
 	}
 	defer stmt.Close()
 	_, err = stmt.Exec(newValue, key)
 	if err != nil {
-		log.Fatal(err)
+		return nil,err
 	}
 
-	return &KeyValData{key,newValue},err
+	return &KeyValData{key,newValue},nil
 }
 
 func DeleteKeyVal(key string) (bool, error){
 	stmt, err := db.Prepare("delete from KeyVal where key = ?")
 	if err != nil {
-		log.Fatal(err)
+		return false,err
 	}
 	defer stmt.Close()
 	_, err = stmt.Exec(key)
 	if err != nil {
-		log.Fatal(err)
+		return false,err
 	}
 
-	return true,err
+	return true,nil
 }
