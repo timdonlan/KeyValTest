@@ -65,6 +65,3 @@ func createKeyVal(c *gin.Context){
 	}
 }
 
-func getAllKeyVal(c *gin.Context){
-
-}

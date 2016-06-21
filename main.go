@@ -6,18 +6,30 @@ import ("fmt"
 	"KeyValTest/router"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"flag"
+	"github.com/vharitonsky/iniflags"
+)
+
+var(
+	dbName = flag.String("dbName","default","Description")
+	dbUser = flag.String("dbUser","user","DB Username")
+	dbPass = flag.String("dbPass","password", "DB Password")
 )
 
 func main() {
 
-	dbName := "KeyVal.db"
+	InitializeFlags()
 
 	//model.ResetDB(dbName)
-	model.InitDB(dbName)
+	model.InitDB(*dbName)
 	//model.CreateKeyVal("hello", "world")
 	//model.CreateKeyVal("world2", "hello2")
 	router.StartService()
 
+}
+
+func InitializeFlags(){
+	iniflags.Parse()
 }
 
 func testDB() {
