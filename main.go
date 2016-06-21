@@ -28,7 +28,6 @@ func main() {
 		return
 	}
 
-
 	json,err := json.Marshal(dataArray)
 	fmt.Printf("%s", json)
 
