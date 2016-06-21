@@ -7,7 +7,7 @@ type KeyValData struct{
 	Value string
 }
 
-func GetAll() ([]*KeyValData, error){
+func GetAllKeyVal() ([]*KeyValData, error){
 	keyValArray := make([]*KeyValData,0)
 
 	rows, err := db.Queryx("select key,value from KeyVal")
@@ -27,7 +27,7 @@ func GetAll() ([]*KeyValData, error){
 	return keyValArray,nil
 }
 
-func Get(key string) (*KeyValData, error){
+func GetKeyVal(key string) (*KeyValData, error){
 	var retval KeyValData
 
 	rows, err := db.Queryx("select key,value from KeyVal where key = ?", key)
@@ -45,7 +45,7 @@ func Get(key string) (*KeyValData, error){
 	return &retval,nil
 }
 
-func Create(key string, value string) (*KeyValData, error){
+func CreateKeyVal(key string, value string) (*KeyValData, error){
 	stmt, err := db.Prepare("insert into KeyVal(key, value) values(?, ?)")
 	if err != nil {
 		log.Fatal(err)
@@ -59,7 +59,7 @@ func Create(key string, value string) (*KeyValData, error){
 	return &KeyValData{key,value},err
 }
 
-func Update(key string, newValue string) (*KeyValData, error){
+func UpdateKeyVal(key string, newValue string) (*KeyValData, error){
 	stmt, err := db.Prepare("update KeyVal set value = ? where key = ?")
 	if err != nil {
 		log.Fatal(err)
@@ -73,7 +73,7 @@ func Update(key string, newValue string) (*KeyValData, error){
 	return &KeyValData{key,newValue},err
 }
 
-func Delete(key string) (bool, error){
+func DeleteKeyVal(key string) (bool, error){
 	stmt, err := db.Prepare("delete from KeyVal where key = ?")
 	if err != nil {
 		log.Fatal(err)
