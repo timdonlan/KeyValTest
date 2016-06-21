@@ -5,10 +5,41 @@ import ("fmt"
 	"database/sql"
 	"log"
 	_ "github.com/mattn/go-sqlite3"
-	"KeyValTest/KeyVal"
+	"KeyValTest/model"
+	"encoding/json"
 )
 
+
+
 func main() {
+
+	dbName := "KeyVal.db"
+
+	model.ResetDB(dbName)
+	model.InitDB(dbName)
+	model.Create("hello", "world")
+	model.Create("world2", "hello2")
+
+	model.Update("hello","world3")
+	model.Delete("world2")
+
+	dataArray,err := model.GetAll()
+	if(err != nil){
+		return
+	}
+
+
+	json,err := json.Marshal(dataArray)
+	fmt.Printf("%s", json)
+
+	for _, data := range dataArray{
+		if(data != nil) {
+
+		fmt.Printf("%s: %s\n",data.Key, data.Value)
+		}
+	}
+
+	/*
 	KeyVal.Setup()
 	KeyVal.Create("hello", "world")
 	KeyVal.Create("world","hello")
@@ -24,6 +55,8 @@ func main() {
 
 	data = KeyVal.GetX("hello")
 	fmt.Printf("Hello: %s\n",data.Value)
+	*/
+
 }
 
 func testSQLLite(){

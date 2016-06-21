@@ -1,10 +1,10 @@
 package KeyVal
 
 import (
-	"database/sql"
 	"log"
 	"os"
 	"github.com/jmoiron/sqlx"
+	"fmt"
 )
 
 type KeyValData struct{
@@ -12,16 +12,15 @@ type KeyValData struct{
 	Value string
 }
 
+var db *sqlx.DB
 
 func Setup(){
 	os.Remove("./KeyVal.db")
-
-	db, err := sql.Open("sqlite3", "./KeyVal.db")
+	var err error
+	db,err = sqlx.Open("sqlite3", "./KeyVal.db")
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
-
 
 	sqlStmt := "Create table KeyVal (key text not null primary key, value text);"
 	_, err = db.Exec(sqlStmt)
@@ -31,19 +30,16 @@ func Setup(){
 	}
 }
 
-
 func Create(key string, value string){
-	db, err := sql.Open("sqlite3", "./KeyVal.db")
+	/*
+	db, err = sql.Open("sqlite3", "./KeyVal.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
+	*/
 
-	tx, err := db.Begin()
-	if err != nil {
-		log.Fatal(err)
-	}
-	stmt, err := tx.Prepare("insert into KeyVal(key, value) values(?, ?)")
+	stmt, err := db.Prepare("insert into KeyVal(key, value) values(?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -52,15 +48,16 @@ func Create(key string, value string){
 	if err != nil {
 		log.Fatal(err)
 	}
-	tx.Commit()
 }
 
 func Update(key string, newValue string){
+	/*
 	db, err := sql.Open("sqlite3", "./KeyVal.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
+	*/
 
 	stmt, err := db.Prepare("update KeyVal set value = ? where key = ?")
 	if err != nil {
@@ -75,11 +72,13 @@ func Update(key string, newValue string){
 }
 
 func Delete(key string){
+	/*
 	db, err := sql.Open("sqlite3", "./KeyVal.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
+	*/
 
 	stmt, err := db.Prepare("delete from KeyVal where key = ?")
 	if err != nil {
@@ -96,13 +95,6 @@ func GetX(key string) KeyValData {
 
 	var retval KeyValData
 
-	//var db *sqlx.DB
-	db,err := sqlx.Open("sqlite3", "./KeyVal.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-
 	rows, err := db.Queryx("select key,value from KeyVal where key = ?", key)
 	if err != nil {
 		log.Fatal(err)
@@ -116,15 +108,28 @@ func GetX(key string) KeyValData {
 
 }
 
+func Get2(key string ) KeyValData{
+	var retval KeyValData
+	var found bool
+
+	retval, found = Query(retval,"select key,value from KeyVal where key = ?", key).(KeyValData)
+	if !found{
+		fmt.Print("unable to map data")
+	}
+	return retval
+}
+
 func Get(key string) KeyValData {
 
 	var retval KeyValData
 
+	/*
 	db, err := sql.Open("sqlite3", "./KeyVal.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
+	*/
 
 	rows, err := db.Query("select value from KeyVal where key = ?", key)
 	if err != nil {
