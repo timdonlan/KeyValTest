@@ -16,7 +16,8 @@ type DataStoreGroup struct{
 
 const insertDS = "INSERT INTO dataStoreGroup (groupName, parentId, providerId) values ('testGroup2',0,0)"
 const selectDS = "select id, groupName as 'groupname' ,parentId as 'parentid', providerId as 'providerid' from dataStoreGroup"
-
+const selectDS2 = `select id, groupName as 'groupname' ,parentId as 'parentid', providerId as 'providerid' from dataStoreGroup
+where id = ?`
 
 func Connect(dataSourceName string){
 
@@ -50,37 +51,17 @@ func InsertDSGroup(){
 
 }
 
-func SelectDSGroup() *DataStoreGroup{
-	var retVal DataStoreGroup
-
+func SelectDSGroup() *[]DataStoreGroup{
+	var retVal []DataStoreGroup
 
 	db, err := sqlx.Open("mysql", "godev:gopass@/godev")
 	if(err!= nil){
 		log.Panic(err)
 	}
 
-	err = db.Get(&retVal,selectDS)
+	err = db.Select(&retVal,selectDS2,2)
 	if err != nil{
 		log.Printf("Error in query %s",err)
 	}
 	return &retVal;
-
-
-		/*
-
-	rows, err := db.Queryx(selectDS)
-	if err != nil {
-		log.Printf("Error in query %s",err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		err = rows.StructScan(&retVal)
-		if err != nil {
-			log.Printf("Error iterating rows: %s",err)
-		}
-	}
-	return &retVal
-
-	*/
 }
