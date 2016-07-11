@@ -21,18 +21,23 @@ var(
 func main() {
 
 	InitializeFlags()
+	InitializeDatabase()
+	router.StartService()
 
 	//testMySQL()
-	model.ResetDB(*dbName)
-	model.InitDB(*dbName)
-	model.CreateKeyVal("hello", "world")
-	model.CreateKeyVal("world2", "hello2")
-	router.StartService()
+	//model.ResetDB(*dbName)
+	//model.InitDB(*dbName)
+	//model.CreateKeyVal("hello", "world")
+	//model.CreateKeyVal("world2", "hello2")
 
 }
 
 func InitializeFlags(){
 	iniflags.Parse()
+}
+
+func InitializeDatabase(){
+	model.OpenDB(*dbName)
 }
 
 func testMySQL(){

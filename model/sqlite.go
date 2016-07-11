@@ -9,6 +9,20 @@ import (
 
 var db *sqlx.DB
 
+func OpenDB(dataSourceName string){
+	var err error
+	db, err = sqlx.Open("sqlite3", dataSourceName)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	if err = db.Ping(); err != nil {
+		log.Panic(err)
+	}
+}
+
+
+
 func ResetDB(dataSourceName string) {
 
 	fmt.Print("%s",dataSourceName)
@@ -32,16 +46,4 @@ func ResetDB(dataSourceName string) {
 	}
 
 
-}
-
-func InitDB(dataSourceName string) {
-	var err error
-	db, err = sqlx.Open("sqlite3", dataSourceName)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	if err = db.Ping(); err != nil {
-		log.Panic(err)
-	}
 }
