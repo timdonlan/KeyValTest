@@ -12,10 +12,8 @@ import ("fmt"
 )
 
 var(
-	dbName = flag.String("dbName","default.db","Description")
+	sqliteDbName = flag.String("sqliteDbName","default.db","Description")
 	mySQLConnection = flag.String("mySQLConnection","default","Description")
-	dbUser = flag.String("dbUser","user","DB Username")
-	dbPass = flag.String("dbPass","password", "DB Password")
 )
 
 func main() {
@@ -23,13 +21,6 @@ func main() {
 	InitializeFlags()
 	InitializeDatabase()
 	router.StartService()
-
-	//testMySQL()
-	//model.ResetDB(*dbName)
-	//model.InitDB(*dbName)
-	//model.CreateKeyVal("hello", "world")
-	//model.CreateKeyVal("world2", "hello2")
-
 }
 
 func InitializeFlags(){
@@ -37,7 +28,7 @@ func InitializeFlags(){
 }
 
 func InitializeDatabase(){
-	model.OpenDB(*dbName)
+	model.OpenDB(*sqliteDbName)
 }
 
 func testMySQL(){
@@ -55,7 +46,6 @@ func testDB() {
 	dbName := "KeyVal.db"
 
 	model.ResetDB(dbName)
-	model.InitDB(dbName)
 	model.CreateKeyVal("hello", "world")
 
 	model.CreateKeyVal("world2", "hello2")

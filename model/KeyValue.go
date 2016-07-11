@@ -7,6 +7,20 @@ type KeyValData struct{
 	Value string
 }
 
+func GetAll() ([]*KeyValData, error) {
+	keyValArray := make([]*KeyValData,0)
+
+	var err error
+
+	sqlQuery := `SELECT KEY, VALUE FROM KEYVAL`
+
+	err = db.Select(&keyValArray,sqlQuery)
+
+
+	return keyValArray, err
+}
+
+//DEPRECATED
 func GetAllKeyVal() ([]*KeyValData, error){
 	keyValArray := make([]*KeyValData,0)
 

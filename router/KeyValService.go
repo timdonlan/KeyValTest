@@ -15,17 +15,16 @@ func StartService(){
 
 	r.GET("/key/:key",getKeyVal)
 	r.GET("/keys",getAllKeyVals)
+
 	r.POST("/key", createKeyVal)
+	r.PUT("/key/:key", updateKeyVal)
+	r.DELETE("/key/:key", deleteKeyVal)
 
-
-	r.Run(":8081") // listen and server on 0.0.0.0:8081
+	r.Run(":8081") // listen and server on 0.0.0.0:8081 //TODO: get this from config
 }
 
 func getKeyVal(c *gin.Context) {
 	key := c.Param("key")
-
-	//c.JSON(200, key)
-	//return
 
 	keyValData, err := model.GetKeyVal(key)
 	if (err != nil) {
@@ -39,7 +38,7 @@ func getKeyVal(c *gin.Context) {
 }
 
 func getAllKeyVals(c *gin.Context){
-	keyValArray, err := model.GetAllKeyVal()
+	keyValArray, err := model.GetAll()
 	if (err != nil) {
 		c.JSON(500, gin.H{"error":err})
 	} else if keyValArray != nil {
@@ -47,7 +46,6 @@ func getAllKeyVals(c *gin.Context){
 	} else {
 		c.JSON(404, gin.H{"error": "Not Found"})
 	}
-
 }
 
 func createKeyVal(c *gin.Context){
@@ -62,6 +60,39 @@ func createKeyVal(c *gin.Context){
 		} else {
 			c.JSON(500, gin.H{"error": "Unable to create"})
 		}
+	}
+}
+
+func updateKeyVal(c *gin.Context){
+	key := c.Param("key")
+	var updateKeyVal model.KeyValData
+	if c.BindJSON(&updateKeyVal) == nil {
+		if(key != updateKeyVal.Key){
+			c.JSON(500, gin.H{"error": "Key in URI does not match post parameter"})
+		}
+
+		keyValData, err := model.UpdateKeyVal(updateKeyVal.Key,updateKeyVal.Value)
+		if (err != nil) {
+			c.JSON(500, gin.H{"error":err})
+		} else if keyValData != nil {
+			c.JSON(200, keyValData)
+		} else {
+			c.JSON(500, gin.H{"error": "Unable to update"})
+		}
+	}
+}
+
+func deleteKeyVal(c *gin.Context) {
+	key := c.Param("key")
+	deleted, err := model.DeleteKeyVal(key)
+	if (err != nil) {
+		c.JSON(500, gin.H{"error":err})
+	} else if deleted == false {
+		c.JSON(500, gin.H{"error":"Unable to delete"})
+	} else if deleted == true {
+		c.JSON(200, deleted)
+	} else {
+		c.JSON(500, gin.H{"error": "Unable to delete"})
 	}
 }
 

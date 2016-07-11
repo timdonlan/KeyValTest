@@ -21,8 +21,6 @@ func OpenDB(dataSourceName string){
 	}
 }
 
-
-
 func ResetDB(dataSourceName string) {
 
 	fmt.Print("%s",dataSourceName)
@@ -44,6 +42,4 @@ func ResetDB(dataSourceName string) {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return
 	}
-
-
 }
