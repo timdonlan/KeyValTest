@@ -8,6 +8,11 @@ import (
 
 func StartService(hostingIP string, hostingPort int) {
 	r := gin.Default()
+
+	r.GET("/health", func(c *gin.Context) {
+		c.Data(200,"text/plain",[]byte("OK"))
+	})
+
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
