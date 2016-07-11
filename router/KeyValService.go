@@ -69,6 +69,7 @@ func updateKeyVal(c *gin.Context) {
 	if c.BindJSON(&updateKeyVal) == nil {
 		if key != updateKeyVal.Key {
 			c.JSON(500, gin.H{"error": "Key in URI does not match post parameter"})
+			return;
 		}
 
 		keyValData, err := model.UpdateKeyVal(updateKeyVal.Key, updateKeyVal.Value)

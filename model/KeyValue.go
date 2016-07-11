@@ -1,6 +1,9 @@
 package model
 
-import "log"
+import (
+	"log"
+	"errors"
+)
 
 type KeyValData struct {
 	Key   string
@@ -38,10 +41,14 @@ func CreateKeyVal(key string, value string) (*KeyValData, error) {
 
 	sqlStmt := `INSERT INTO KEYVAL (KEY,VALUE) VALUES (?,?)`
 
-	_, err := db.Exec(sqlStmt, key, value) //swallow the result - do something with this?
+	result, err := db.Exec(sqlStmt, key, value)
 	if err != nil {
 		log.Print(err)
 		return nil, err
+	}
+
+	if rows,_ := result.RowsAffected(); rows == 0{
+		return nil, errors.New("Failed to insert row")
 	}
 
 	return &KeyValData{key, value}, nil
@@ -51,20 +58,32 @@ func UpdateKeyVal(key string, newValue string) (*KeyValData, error) {
 
 	sqlStmt := `UPDATE KEYVAL SET VALUE = ? WHERE KEY = ?`
 
-	_, err := db.Exec(sqlStmt, newValue, key) //swallow the result - do something with this?
+	result, err := db.Exec(sqlStmt, newValue, key)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
+
+	if rows,_ := result.RowsAffected(); rows == 0{
+		return nil, errors.New("Failed to update row")
+	}
+
 	return &KeyValData{key, newValue}, nil
 }
 
 func DeleteKeyVal(key string) (bool, error) {
 
 	sqlStmt := `DELETE FROM KEYVAL WHERE KEY = ?`
-	_, err := db.Exec(sqlStmt, key) //swallow the result - do something with this?
+
+	result, err := db.Exec(sqlStmt, key)
 	if err != nil {
+		log.Print(err)
 		return false, err
 	}
-	return true, nil
+
+	if rows,_ := result.RowsAffected(); rows == 0{
+		return false, nil
+	}
+
+	return true,nil
 }
