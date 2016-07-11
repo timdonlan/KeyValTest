@@ -13,15 +13,21 @@ import (
 )
 
 var (
-	sqliteDbName    = flag.String("sqliteDbName", "default.db", "Description")
-	mySQLConnection = flag.String("mySQLConnection", "default", "Description")
+	sqliteDbName    = flag.String("sqliteDbName", "default.db", "Filename of SQLite database")
+	hostingPort = flag.Int("hostingPort", 8080, "Default hosting port for the service")
+	mySQLConnection = flag.String("mySQLConnection", "default", "Standard connection for mysql database")
 )
 
 func main() {
 
+	fmt.Print(fmt.Sprintf("%s:%d\n\n","",123))
+
+
+
 	InitializeFlags()
 	InitializeDatabase()
-	router.StartService()
+	router.StartService("",*hostingPort)
+
 }
 
 func InitializeFlags() {

@@ -3,9 +3,10 @@ package router
 import (
 	"KeyValTest/model"
 	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
-func StartService() {
+func StartService(hostingIP string, hostingPort int) {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -20,7 +21,8 @@ func StartService() {
 	r.PUT("/key/:key", updateKeyVal)
 	r.DELETE("/key/:key", deleteKeyVal)
 
-	r.Run(":8081") // listen and server on 0.0.0.0:8081 //TODO: get this from config
+	ipPort := fmt.Sprintf("%s:%d",hostingIP,hostingPort)
+	r.Run(ipPort)
 }
 
 func getKeyVal(c *gin.Context) {
