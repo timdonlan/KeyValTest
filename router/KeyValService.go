@@ -28,6 +28,12 @@ func StartService(hostingIP string, hostingPort int) {
 
 	ipPort := fmt.Sprintf("%s:%d",hostingIP,hostingPort)
 	r.Run(ipPort)
+
+
+}
+
+func StopService(){
+
 }
 
 func getKeyVal(c *gin.Context) {
