@@ -1,19 +1,20 @@
 package main
 
-import ("fmt"
-	_ "github.com/mattn/go-sqlite3"
+import (
 	"KeyValTest/model"
+	"KeyValTest/router"
 	_ "KeyValTest/router"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"flag"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/vharitonsky/iniflags"
-	"KeyValTest/router"
 )
 
-var(
-	sqliteDbName = flag.String("sqliteDbName","default.db","Description")
-	mySQLConnection = flag.String("mySQLConnection","default","Description")
+var (
+	sqliteDbName    = flag.String("sqliteDbName", "default.db", "Description")
+	mySQLConnection = flag.String("mySQLConnection", "default", "Description")
 )
 
 func main() {
@@ -23,22 +24,22 @@ func main() {
 	router.StartService()
 }
 
-func InitializeFlags(){
+func InitializeFlags() {
 	iniflags.Parse()
 }
 
-func InitializeDatabase(){
+func InitializeDatabase() {
 	model.OpenDB(*sqliteDbName)
 }
 
-func testMySQL(){
+func testMySQL() {
 	model.Connect(*mySQLConnection)
 	model.InsertDSGroup()
 	dsGroup := model.SelectDSGroup()
 
-	json,err := json.Marshal(dsGroup)
-	if err == nil{
-		fmt.Printf("%s",json)
+	json, err := json.Marshal(dsGroup)
+	if err == nil {
+		fmt.Printf("%s", json)
 	}
 }
 
@@ -54,7 +55,7 @@ func testDB() {
 	model.DeleteKeyVal("world2")
 
 	dataArray, err := model.GetAll()
-	if (err != nil) {
+	if err != nil {
 		return
 	}
 
@@ -62,7 +63,7 @@ func testDB() {
 	fmt.Printf("%s", json)
 
 	for _, data := range dataArray {
-		if (data != nil) {
+		if data != nil {
 
 			fmt.Printf("%s: %s\n", data.Key, data.Value)
 		}

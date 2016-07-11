@@ -1,16 +1,15 @@
 package model
 
-
 import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"log"
 )
 
-type DataStoreGroup struct{
-	Id int
-	GroupName string
-	ParentId int
+type DataStoreGroup struct {
+	Id         int
+	GroupName  string
+	ParentId   int
 	ProviderId int
 }
 
@@ -19,12 +18,12 @@ const selectDS = "select id, groupName as 'groupname' ,parentId as 'parentid', p
 const selectDS2 = `select id, groupName as 'groupname' ,parentId as 'parentid', providerId as 'providerid' from dataStoreGroup
 where id = ?`
 
-func Connect(dataSourceName string){
+func Connect(dataSourceName string) {
 
-	log.Printf("%s",dataSourceName)
+	log.Printf("%s", dataSourceName)
 
 	db, err := sqlx.Open("mysql", "godev:gopass@/godev")
-	if(err!= nil){
+	if err != nil {
 		log.Panic(err)
 	}
 
@@ -33,9 +32,9 @@ func Connect(dataSourceName string){
 	}
 }
 
-func InsertDSGroup(){
+func InsertDSGroup() {
 	db, err := sqlx.Open("mysql", "godev:gopass@/godev")
-	if(err!= nil){
+	if err != nil {
 		log.Panic(err)
 	}
 
@@ -51,17 +50,17 @@ func InsertDSGroup(){
 
 }
 
-func SelectDSGroup() *[]DataStoreGroup{
+func SelectDSGroup() *[]DataStoreGroup {
 	var retVal []DataStoreGroup
 
 	db, err := sqlx.Open("mysql", "godev:gopass@/godev")
-	if(err!= nil){
+	if err != nil {
 		log.Panic(err)
 	}
 
-	err = db.Select(&retVal,selectDS2,2)
-	if err != nil{
-		log.Printf("Error in query %s",err)
+	err = db.Select(&retVal, selectDS2, 2)
+	if err != nil {
+		log.Printf("Error in query %s", err)
 	}
-	return &retVal;
+	return &retVal
 }

@@ -1,15 +1,15 @@
 package model
 
 import (
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"log"
 	"os"
-	"fmt"
 )
 
 var db *sqlx.DB
 
-func OpenDB(dataSourceName string){
+func OpenDB(dataSourceName string) {
 	var err error
 	db, err = sqlx.Open("sqlite3", dataSourceName)
 	if err != nil {
@@ -23,7 +23,7 @@ func OpenDB(dataSourceName string){
 
 func ResetDB(dataSourceName string) {
 
-	fmt.Print("%s",dataSourceName)
+	fmt.Print("%s", dataSourceName)
 	os.Remove(dataSourceName)
 
 	var err error
