@@ -10,63 +10,35 @@ type KeyValData struct{
 func GetAll() ([]*KeyValData, error) {
 	keyValArray := make([]*KeyValData,0)
 
-	var err error
-
 	sqlQuery := `SELECT KEY, VALUE FROM KEYVAL`
 
-	err = db.Select(&keyValArray,sqlQuery)
-
-
-	return keyValArray, err
-}
-
-//DEPRECATED
-func GetAllKeyVal() ([]*KeyValData, error){
-	keyValArray := make([]*KeyValData,0)
-
-	rows, err := db.Queryx("select key,value from KeyVal")
-	if err != nil {
-		return nil,err
+	err := db.Select(&keyValArray,sqlQuery)
+	if err != nil{
+		log.Print(err)
+		return nil, err
 	}
-	defer rows.Close()
-
-	for rows.Next() {
-		tempKeyVal := new(KeyValData)
-		err = rows.StructScan(&tempKeyVal)
-		if err != nil {
-			return nil,err
-		}
-		keyValArray = append(keyValArray, tempKeyVal)
-	}
-	return keyValArray,nil
+	return keyValArray, nil
 }
 
 func GetKeyVal(key string) (*KeyValData, error){
 	var retval KeyValData
 
-	rows, err := db.Queryx("select key,value from KeyVal where key = ?", key)
-	if err != nil {
-		return nil,err
-	}
-	defer rows.Close()
+	sqlQuery := `SELECT KEY,VALUE FROM KEYVAL WHERE KEY = ?`
 
-	for rows.Next() {
-		err = rows.StructScan(&retval)
-		if err != nil {
-			return nil,err
-		}
-	}
-	return &retval,nil
-}
-
-func CreateKeyVal(key string, value string) (*KeyValData, error){
-	stmt, err := db.Prepare("insert into KeyVal(key, value) values(?, ?)")
+	err := db.Get(&retval,sqlQuery,key)
 	if err != nil {
 		log.Print(err)
 		return nil,err
 	}
-	defer stmt.Close()
-	_, err = stmt.Exec(key, value)
+
+	return &retval,nil
+}
+
+func CreateKeyVal(key string, value string) (*KeyValData, error){
+
+	sqlStmt := `INSERT INTO KEYVAL (KEY,VALUE) VALUES (?,?)`
+
+	_, err := db.Exec(sqlStmt,key,value) //swallow the result - do something with this?
 	if err != nil {
 		log.Print(err)
 		return nil,err
@@ -76,29 +48,23 @@ func CreateKeyVal(key string, value string) (*KeyValData, error){
 }
 
 func UpdateKeyVal(key string, newValue string) (*KeyValData, error){
-	stmt, err := db.Prepare("update KeyVal set value = ? where key = ?")
-	if err != nil {
-		return nil,err
-	}
-	defer stmt.Close()
-	_, err = stmt.Exec(newValue, key)
-	if err != nil {
-		return nil,err
-	}
 
+	sqlStmt := `UPDATE KEYVAL SET VALUE = ? WHERE KEY = ?`
+
+	_, err := db.Exec(sqlStmt,newValue,key) //swallow the result - do something with this?
+	if err != nil {
+		log.Print(err)
+		return nil,err
+	}
 	return &KeyValData{key,newValue},nil
 }
 
 func DeleteKeyVal(key string) (bool, error){
-	stmt, err := db.Prepare("delete from KeyVal where key = ?")
-	if err != nil {
-		return false,err
-	}
-	defer stmt.Close()
-	_, err = stmt.Exec(key)
-	if err != nil {
-		return false,err
-	}
 
+	sqlStmt := `DELETE FROM KEYVAL WHERE KEY = ?`
+	_, err := db.Exec(sqlStmt,key) //swallow the result - do something with this?
+	if err != nil {
+		return false,err
+	}
 	return true,nil
 }

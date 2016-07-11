@@ -53,7 +53,7 @@ func testDB() {
 	model.UpdateKeyVal("hello", "world3")
 	model.DeleteKeyVal("world2")
 
-	dataArray, err := model.GetAllKeyVal()
+	dataArray, err := model.GetAll()
 	if (err != nil) {
 		return
 	}

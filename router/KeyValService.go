@@ -28,7 +28,7 @@ func getKeyVal(c *gin.Context) {
 
 	keyValData, err := model.GetKeyVal(key)
 	if (err != nil) {
-		c.JSON(500, gin.H{"error":err})
+		c.JSON(500, gin.H{"error":err.Error()})
 	}else if keyValData != nil {
 		c.JSON(200, keyValData)
 	} else {
@@ -40,7 +40,7 @@ func getKeyVal(c *gin.Context) {
 func getAllKeyVals(c *gin.Context){
 	keyValArray, err := model.GetAll()
 	if (err != nil) {
-		c.JSON(500, gin.H{"error":err})
+		c.JSON(500, gin.H{"error":err.Error()})
 	} else if keyValArray != nil {
 		c.JSON(200, keyValArray)
 	} else {
@@ -54,7 +54,7 @@ func createKeyVal(c *gin.Context){
 	if c.BindJSON(&newKeyVal) == nil {
 		keyValData, err := model.CreateKeyVal(newKeyVal.Key, newKeyVal.Value)
 		if (err != nil) {
-			c.JSON(500, gin.H{"error":err})
+			c.JSON(500, gin.H{"error":err.Error()})
 		} else if keyValData != nil {
 			c.JSON(200, keyValData)
 		} else {
@@ -73,7 +73,7 @@ func updateKeyVal(c *gin.Context){
 
 		keyValData, err := model.UpdateKeyVal(updateKeyVal.Key,updateKeyVal.Value)
 		if (err != nil) {
-			c.JSON(500, gin.H{"error":err})
+			c.JSON(500, gin.H{"error":err.Error()})
 		} else if keyValData != nil {
 			c.JSON(200, keyValData)
 		} else {
@@ -86,7 +86,7 @@ func deleteKeyVal(c *gin.Context) {
 	key := c.Param("key")
 	deleted, err := model.DeleteKeyVal(key)
 	if (err != nil) {
-		c.JSON(500, gin.H{"error":err})
+		c.JSON(500, gin.H{"error":err.Error()})
 	} else if deleted == false {
 		c.JSON(500, gin.H{"error":"Unable to delete"})
 	} else if deleted == true {
