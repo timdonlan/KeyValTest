@@ -8,10 +8,11 @@ import ("fmt"
 	"github.com/gin-gonic/gin"
 	"flag"
 	"github.com/vharitonsky/iniflags"
+	"KeyValTest/router"
 )
 
 var(
-	dbName = flag.String("dbName","default","Description")
+	dbName = flag.String("dbName","default.db","Description")
 	mySQLConnection = flag.String("mySQLConnection","default","Description")
 	dbUser = flag.String("dbUser","user","DB Username")
 	dbPass = flag.String("dbPass","password", "DB Password")
@@ -21,12 +22,12 @@ func main() {
 
 	InitializeFlags()
 
-	testMySQL()
-	//model.ResetDB(dbName)
-	//model.InitDB(*dbName)
-	//model.CreateKeyVal("hello", "world")
-	//model.CreateKeyVal("world2", "hello2")
-	//router.StartService()
+	//testMySQL()
+	model.ResetDB(*dbName)
+	model.InitDB(*dbName)
+	model.CreateKeyVal("hello", "world")
+	model.CreateKeyVal("world2", "hello2")
+	router.StartService()
 
 }
 

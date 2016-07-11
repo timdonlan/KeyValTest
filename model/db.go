@@ -4,11 +4,14 @@ import (
 	"github.com/jmoiron/sqlx"
 	"log"
 	"os"
+	"fmt"
 )
 
 var db *sqlx.DB
 
 func ResetDB(dataSourceName string) {
+
+	fmt.Print("%s",dataSourceName)
 	os.Remove(dataSourceName)
 
 	var err error
