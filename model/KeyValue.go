@@ -1,8 +1,8 @@
 package model
 
 import (
-	"log"
 	"errors"
+	"log"
 )
 
 type KeyValData struct {
@@ -47,7 +47,7 @@ func CreateKeyVal(key string, value string) (*KeyValData, error) {
 		return nil, err
 	}
 
-	if rows,_ := result.RowsAffected(); rows == 0{
+	if rows, _ := result.RowsAffected(); rows == 0 {
 		return nil, errors.New("Failed to insert row")
 	}
 
@@ -64,7 +64,7 @@ func UpdateKeyVal(key string, newValue string) (*KeyValData, error) {
 		return nil, err
 	}
 
-	if rows,_ := result.RowsAffected(); rows == 0{
+	if rows, _ := result.RowsAffected(); rows == 0 {
 		return nil, errors.New("Failed to update row")
 	}
 
@@ -81,9 +81,9 @@ func DeleteKeyVal(key string) (bool, error) {
 		return false, err
 	}
 
-	if rows,_ := result.RowsAffected(); rows == 0{
+	if rows, _ := result.RowsAffected(); rows == 0 {
 		return false, nil
 	}
 
-	return true,nil
+	return true, nil
 }

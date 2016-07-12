@@ -2,30 +2,29 @@ package model
 
 import "testing"
 
-
 var testDBName = "default.db"
 
-func initDB(){
+func initDB() {
 
 	ResetDB(testDBName)
 	OpenDB(testDBName)
 }
 
-func mockKeyVal(key string, val string){
-	CreateKeyVal(key,val)
+func mockKeyVal(key string, val string) {
+	CreateKeyVal(key, val)
 }
 
 func TestGetKeyVal(t *testing.T) {
 	initDB()
 
-	mockKeyVal("hello","world")
+	mockKeyVal("hello", "world")
 
-	keyValData,err := GetKeyVal("hello")
-	if err!= nil{
+	keyValData, err := GetKeyVal("hello")
+	if err != nil {
 		t.Error(err)
 	}
 
-	if keyValData.Value != "world"{
+	if keyValData.Value != "world" {
 		t.Error("Invalid response")
 	}
 

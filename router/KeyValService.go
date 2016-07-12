@@ -2,8 +2,8 @@ package router
 
 import (
 	"KeyValTest/model"
-	"github.com/gin-gonic/gin"
 	"fmt"
+	"github.com/gin-gonic/gin"
 )
 
 //package variables for mocking
@@ -14,7 +14,7 @@ func StartService(hostingIP string, hostingPort int) {
 	r := gin.Default()
 
 	r.GET("/health", func(c *gin.Context) {
-		c.Data(200,"text/plain",[]byte("OK"))
+		c.Data(200, "text/plain", []byte("OK"))
 	})
 
 	r.GET("/ping", func(c *gin.Context) {
@@ -30,7 +30,7 @@ func StartService(hostingIP string, hostingPort int) {
 	r.PUT("/key/:key", updateKeyVal)
 	r.DELETE("/key/:key", deleteKeyVal)
 
-	ipPort := fmt.Sprintf("%s:%d",hostingIP,hostingPort)
+	ipPort := fmt.Sprintf("%s:%d", hostingIP, hostingPort)
 	r.Run(ipPort)
 
 }
@@ -81,7 +81,7 @@ func updateKeyVal(c *gin.Context) {
 	if c.BindJSON(&updateKeyVal) == nil {
 		if key != updateKeyVal.Key {
 			c.JSON(500, gin.H{"error": "Key in URI does not match post parameter"})
-			return;
+			return
 		}
 
 		keyValData, err := model.UpdateKeyVal(updateKeyVal.Key, updateKeyVal.Value)

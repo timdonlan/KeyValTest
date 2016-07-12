@@ -7,13 +7,12 @@ import (
 
 	"flag"
 
-
 	"github.com/vharitonsky/iniflags"
 )
 
 var (
 	sqliteDbName *string
-	hostingPort *int
+	hostingPort  *int
 )
 
 func main() {
@@ -21,14 +20,14 @@ func main() {
 	StartService()
 }
 
-func StartService(){
+func StartService() {
 	InitializeDatabase()
-	router.StartService("",*hostingPort)
+	router.StartService("", *hostingPort)
 }
 
 func InitializeFlags() {
 
-	sqliteDbName   = flag.String("sqliteDbName", "default.db", "Filename of SQLite database")
+	sqliteDbName = flag.String("sqliteDbName", "default.db", "Filename of SQLite database")
 	hostingPort = flag.Int("hostingPort", 8080, "Default hosting port for the service")
 
 	iniflags.Parse()

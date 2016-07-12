@@ -3,9 +3,9 @@ package model
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
-	_"github.com/mattn/go-sqlite3"
 )
 
 var db *sqlx.DB
@@ -47,5 +47,4 @@ func ResetDB(dataSourceName string) {
 
 func CleanDB(dataSourceName string) {
 	os.Remove(dataSourceName)
-
 }
