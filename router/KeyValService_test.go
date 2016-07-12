@@ -9,14 +9,27 @@ import (
 	"fmt"
 )
 
-func TestGetKeyVal(t *testing.T) {
+type mockedKeyValDAL struct{}
 
-	//mock db
-	oldModelGetKeyVal := modelGetKeyVal
-	defer func() { modelGetKeyVal = oldModelGetKeyVal }()
-	modelGetKeyVal = func(key string) (*model.KeyValData, error) {
-		return &model.KeyValData{key, "bar"}, nil
-	}
+func (m *mockedKeyValDAL) GetAll() ([]*model.KeyValData, error){
+	return nil,nil
+}
+func (m *mockedKeyValDAL) GetKeyVal(key string) (*model.KeyValData, error){
+	return nil,nil
+}
+func (m *mockedKeyValDAL) CreateKeyVal(key string, value string) (*model.KeyValData, error){
+	return nil,nil
+}
+func (m *mockedKeyValDAL) UpdateKeyVal(key string, newValue string) (*model.KeyValData, error){
+	return nil,nil
+}
+func (m *mockedKeyValDAL) DeleteKeyVal(key string) (bool, error){
+	return false,nil
+}
+
+func TestGetAll(t *testing.T) {
+	//Mock DAL for testing service
+	keyValDAL = new(mockedKeyValDAL)
 
 	r := gin.Default()
 	r.GET("/key/:key", getKeyVal)
@@ -31,5 +44,4 @@ func TestGetKeyVal(t *testing.T) {
 		t.Error("HTTP status expected: 200, got: %d", w.Code)
 	}
 	fmt.Print(w.Body.String())
-
 }

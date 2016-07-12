@@ -6,7 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var keyValDAL *model.KeyValDAL
+//do we want this package global?
+var keyValDAL model.KeyValDALInterface
 
 func StartService(hostingIP string, hostingPort int, dal *model.KeyValDAL) {
 
