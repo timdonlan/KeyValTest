@@ -5,6 +5,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"log"
 	"os"
+	_"github.com/mattn/go-sqlite3"
 )
 
 var db *sqlx.DB
@@ -42,4 +43,9 @@ func ResetDB(dataSourceName string) {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return
 	}
+}
+
+func CleanDB(dataSourceName string) {
+	os.Remove(dataSourceName)
+
 }
