@@ -4,6 +4,9 @@ import (
 	"KeyValTest/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
+	_"io/ioutil"
+	"io/ioutil"
 )
 
 //do we want this package global?
@@ -74,6 +77,13 @@ func createKeyVal(c *gin.Context) {
 		} else {
 			c.JSON(500, gin.H{"error": "Unable to create"})
 		}
+	} else{
+		if b, err := ioutil.ReadAll(c.Request.Body); err == nil {
+			log.Printf("Received: %s",string(b))
+		}
+		log.Print("Was unable to bind to model")
+
+		c.JSON(500, gin.H{"error": "Invalid JSON"})
 	}
 }
 
