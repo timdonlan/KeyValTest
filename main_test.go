@@ -4,7 +4,6 @@ import (
 	"flag"
 	"net/http"
 	"testing"
-
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http/httptest"
@@ -15,7 +14,6 @@ import (
 func initTestingFlags() {
 	sqliteDbName = flag.String("sqliteDbName", "default.db", "Filename of SQLite database")
 	hostingPort = flag.Int("hostingPort", 8088, "Default hosting port for the service")
-	mySQLConnection = flag.String("mySQLConnection", "default", "Standard connection for mysql database")
 }
 
 func cleanupTests() {

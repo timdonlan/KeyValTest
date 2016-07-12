@@ -3,10 +3,7 @@ package main
 import (
 	"KeyValTest/model"
 	"KeyValTest/router"
-	_ "KeyValTest/router"
-
 	"flag"
-
 	"github.com/vharitonsky/iniflags"
 )
 
