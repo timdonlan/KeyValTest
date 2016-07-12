@@ -5,25 +5,33 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/http/httptest"
+
+	"KeyValTest/model"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 )
 
-func TestFoo(t *testing.T) {
-	handler := func(c *gin.Context) {
-		c.String(http.StatusOK, "bar")
+
+func TestGetKeyVal(t *testing.T) {
+
+	//mock db
+	oldModelGetKeyVal := modelGetKeyVal
+	defer func() {modelGetKeyVal = oldModelGetKeyVal}()
+	modelGetKeyVal = func(key string) (*model.KeyValData, error){
+		return &model.KeyValData{key, "bar"}, nil
 	}
 
-	router := gin.New()
-	router.GET("/foo", handler)
+	r := gin.Default()
+	r.GET("/key/:key", getKeyVal)
+	req,err := http.NewRequest("GET","/key/foo",nil)
+	if err != nil{
+		t.Error(err)
+	}
+	w := httptest.NewRecorder()
 
-	req, _ := http.NewRequest("GET", "/foo", nil)
-	resp := httptest.NewRecorder()
-	router.ServeHTTP(resp, req)
+	r.ServeHTTP(w,req)
+	if w.Code != 200{
+		t.Error("HTTP status expected: 200, got: %d",w.Code)
+	}
+	fmt.Print(w.Body.String())
 
-	fmt.Print(resp.Body.String())
-
-	assert.Equal(t, resp.Body.String(), "bar")
 }
-
-

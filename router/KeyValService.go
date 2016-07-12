@@ -6,7 +6,11 @@ import (
 	"fmt"
 )
 
+//package variables for mocking
+var modelGetKeyVal = model.GetKeyVal
+
 func StartService(hostingIP string, hostingPort int) {
+
 	r := gin.Default()
 
 	r.GET("/health", func(c *gin.Context) {
@@ -34,7 +38,7 @@ func StartService(hostingIP string, hostingPort int) {
 func getKeyVal(c *gin.Context) {
 	key := c.Param("key")
 
-	keyValData, err := model.GetKeyVal(key)
+	keyValData, err := modelGetKeyVal(key)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 	} else if keyValData != nil {
