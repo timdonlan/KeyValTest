@@ -6,10 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//package variables for mocking
-var modelGetKeyVal = model.GetKeyVal
+var keyValDAL *model.KeyValDAL
 
-func StartService(hostingIP string, hostingPort int) {
+func StartService(hostingIP string, hostingPort int, dal *model.KeyValDAL) {
+
+	keyValDAL = dal
 
 	r := gin.Default()
 
@@ -38,7 +39,7 @@ func StartService(hostingIP string, hostingPort int) {
 func getKeyVal(c *gin.Context) {
 	key := c.Param("key")
 
-	keyValData, err := modelGetKeyVal(key)
+	keyValData, err := keyValDAL.GetKeyVal(key)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 	} else if keyValData != nil {
@@ -50,7 +51,7 @@ func getKeyVal(c *gin.Context) {
 }
 
 func getAllKeyVals(c *gin.Context) {
-	keyValArray, err := model.GetAll()
+	keyValArray, err := keyValDAL.GetAll()
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 	} else if keyValArray != nil {
@@ -64,7 +65,7 @@ func createKeyVal(c *gin.Context) {
 	var newKeyVal model.KeyValData
 
 	if c.BindJSON(&newKeyVal) == nil {
-		keyValData, err := model.CreateKeyVal(newKeyVal.Key, newKeyVal.Value)
+		keyValData, err := keyValDAL.CreateKeyVal(newKeyVal.Key, newKeyVal.Value)
 		if err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
 		} else if keyValData != nil {
@@ -84,7 +85,7 @@ func updateKeyVal(c *gin.Context) {
 			return
 		}
 
-		keyValData, err := model.UpdateKeyVal(updateKeyVal.Key, updateKeyVal.Value)
+		keyValData, err := keyValDAL.UpdateKeyVal(updateKeyVal.Key, updateKeyVal.Value)
 		if err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
 		} else if keyValData != nil {
@@ -97,7 +98,7 @@ func updateKeyVal(c *gin.Context) {
 
 func deleteKeyVal(c *gin.Context) {
 	key := c.Param("key")
-	deleted, err := model.DeleteKeyVal(key)
+	deleted, err := keyValDAL.DeleteKeyVal(key)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 	} else if deleted == false {

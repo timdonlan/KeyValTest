@@ -1,33 +1,29 @@
 package model
 
-import "testing"
+import (
+	"testing"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"fmt"
+	"github.com/jmoiron/sqlx"
+)
 
-var testDBName = "default.db"
+func TestGetAll(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db,"sqlmock")
 
-func initDB() {
+	rows := sqlmock.NewRows([]string{"key", "value"}).
+	AddRow("hello", "world").
+	AddRow("foo", "bar")
+	mock.ExpectQuery("SELECT KEY, VALUE FROM KEYVAL").WillReturnRows(rows)
 
-	ResetDB(testDBName)
-	OpenDB(testDBName)
-}
+	keyValDAL := &KeyValDAL{sqlxDB}
 
-func mockKeyVal(key string, val string) {
-	CreateKeyVal(key, val)
-}
-
-func TestGetKeyVal(t *testing.T) {
-	initDB()
-
-	mockKeyVal("hello", "world")
-
-	keyValData, err := GetKeyVal("hello")
-	if err != nil {
+	keyValData,err := keyValDAL.GetAll()
+	if err != nil{
 		t.Error(err)
 	}
 
-	if keyValData.Value != "world" {
-		t.Error("Invalid response")
-	}
-
-	CleanDB(testDBName)
+	fmt.Print(keyValData[0].Value)
 
 }

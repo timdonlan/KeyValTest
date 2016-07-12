@@ -18,8 +18,8 @@ func main() {
 }
 
 func StartService() {
-	InitializeDatabase()
-	router.StartService("", *hostingPort)
+
+	router.StartService("", *hostingPort,InitializeDatabase())
 }
 
 func InitializeFlags() {
@@ -30,6 +30,6 @@ func InitializeFlags() {
 	iniflags.Parse()
 }
 
-func InitializeDatabase() {
-	model.OpenDB(*sqliteDbName)
+func InitializeDatabase() (*model.KeyValDAL) {
+	return model.OpenDB(*sqliteDbName)
 }

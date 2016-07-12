@@ -8,11 +8,11 @@ import (
 	"os"
 )
 
-var db *sqlx.DB
+//var db *sqlx.DB
 
-func OpenDB(dataSourceName string) {
-	var err error
-	db, err = sqlx.Open("sqlite3", dataSourceName)
+func OpenDB(dataSourceName string) (*KeyValDAL) {
+
+	db, err := sqlx.Open("sqlite3", dataSourceName)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -20,6 +20,8 @@ func OpenDB(dataSourceName string) {
 	if err = db.Ping(); err != nil {
 		log.Panic(err)
 	}
+
+	return &KeyValDAL{db}
 }
 
 func ResetDB(dataSourceName string) {
@@ -27,11 +29,12 @@ func ResetDB(dataSourceName string) {
 	fmt.Print("%s", dataSourceName)
 	os.Remove(dataSourceName)
 
-	var err error
-	db, err = sqlx.Open("sqlite3", dataSourceName)
+
+	db, err := sqlx.Open("sqlite3", dataSourceName)
 	if err != nil {
 		log.Panic(err)
 	}
+	defer db.Close()
 
 	if err = db.Ping(); err != nil {
 		log.Panic(err)

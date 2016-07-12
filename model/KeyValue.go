@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"log"
+	"github.com/jmoiron/sqlx"
 )
 
 type KeyValData struct {
@@ -10,12 +11,24 @@ type KeyValData struct {
 	Value string
 }
 
-func GetAll() ([]*KeyValData, error) {
+type KeyValDAL struct{
+	db *sqlx.DB
+}
+
+type KeyValDALInterface interface{
+	GetAll() ([]*KeyValData, error)
+	GetKeyVal(key string) (*KeyValData, error)
+	CreateKeyVal(key string, value string) (*KeyValData, error)
+	UpdateKeyVal(key string, newValue string) (*KeyValData, error)
+	DeleteKeyVal(key string) (bool, error)
+}
+
+func (t *KeyValDAL) GetAll() ([]*KeyValData, error) {
 	keyValArray := make([]*KeyValData, 0)
 
 	sqlQuery := `SELECT KEY, VALUE FROM KEYVAL`
 
-	err := db.Select(&keyValArray, sqlQuery)
+	err := t.db.Select(&keyValArray, sqlQuery)
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -23,12 +36,12 @@ func GetAll() ([]*KeyValData, error) {
 	return keyValArray, nil
 }
 
-func GetKeyVal(key string) (*KeyValData, error) {
+func (t *KeyValDAL) GetKeyVal(key string) (*KeyValData, error) {
 	var retval KeyValData
 
 	sqlQuery := `SELECT KEY,VALUE FROM KEYVAL WHERE KEY = ?`
 
-	err := db.Get(&retval, sqlQuery, key)
+	err := t.db.Get(&retval, sqlQuery, key)
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -37,11 +50,11 @@ func GetKeyVal(key string) (*KeyValData, error) {
 	return &retval, nil
 }
 
-func CreateKeyVal(key string, value string) (*KeyValData, error) {
+func (t *KeyValDAL) CreateKeyVal(key string, value string) (*KeyValData, error) {
 
 	sqlStmt := `INSERT INTO KEYVAL (KEY,VALUE) VALUES (?,?)`
 
-	result, err := db.Exec(sqlStmt, key, value)
+	result, err := t.db.Exec(sqlStmt, key, value)
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -54,11 +67,11 @@ func CreateKeyVal(key string, value string) (*KeyValData, error) {
 	return &KeyValData{key, value}, nil
 }
 
-func UpdateKeyVal(key string, newValue string) (*KeyValData, error) {
+func (t *KeyValDAL) UpdateKeyVal(key string, newValue string) (*KeyValData, error) {
 
 	sqlStmt := `UPDATE KEYVAL SET VALUE = ? WHERE KEY = ?`
 
-	result, err := db.Exec(sqlStmt, newValue, key)
+	result, err := t.db.Exec(sqlStmt, newValue, key)
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -71,11 +84,11 @@ func UpdateKeyVal(key string, newValue string) (*KeyValData, error) {
 	return &KeyValData{key, newValue}, nil
 }
 
-func DeleteKeyVal(key string) (bool, error) {
+func (t *KeyValDAL) DeleteKeyVal(key string) (bool, error) {
 
 	sqlStmt := `DELETE FROM KEYVAL WHERE KEY = ?`
 
-	result, err := db.Exec(sqlStmt, key)
+	result, err := t.db.Exec(sqlStmt, key)
 	if err != nil {
 		log.Print(err)
 		return false, err
