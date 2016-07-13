@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"KeyValTest/model"
+	"KeyVal/model"
 	_"bytes"
 	"fmt"
 	"bytes"

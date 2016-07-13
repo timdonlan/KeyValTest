@@ -1,8 +1,8 @@
 package main
 
 import (
-	"KeyValTest/model"
-	"KeyValTest/router"
+	"KeyVal/model"
+	"KeyVal/router"
 	"flag"
 	"github.com/vharitonsky/iniflags"
 )

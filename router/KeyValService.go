@@ -1,7 +1,7 @@
 package router
 
 import (
-	"KeyValTest/model"
+	"KeyVal/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
