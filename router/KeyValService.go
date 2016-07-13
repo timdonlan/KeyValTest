@@ -10,12 +10,11 @@ import (
 )
 
 //do we want this package global?
-var keyValDAL model.KeyValDALInterface
+//TODO: temporarily global public to access for testing
+var KeyValDAL model.KeyValDALInterface
 
-func StartService(hostingIP string, hostingPort int, dal *model.KeyValDAL) {
-
-	keyValDAL = dal
-
+//Helper to create gin Engine
+func CreateServiceHandlers() *gin.Engine  {
 	r := gin.Default()
 
 	r.GET("/health", func(c *gin.Context) {
@@ -35,6 +34,13 @@ func StartService(hostingIP string, hostingPort int, dal *model.KeyValDAL) {
 	r.PUT("/key/:key", updateKeyVal)
 	r.DELETE("/key/:key", deleteKeyVal)
 
+	return r
+}
+
+func StartService(hostingIP string, hostingPort int, dal *model.KeyValDAL) {
+	KeyValDAL = dal
+
+	r := CreateServiceHandlers()
 	ipPort := fmt.Sprintf("%s:%d", hostingIP, hostingPort)
 	r.Run(ipPort)
 
@@ -43,7 +49,7 @@ func StartService(hostingIP string, hostingPort int, dal *model.KeyValDAL) {
 func getKeyVal(c *gin.Context) {
 	key := c.Param("key")
 
-	keyValData, err := keyValDAL.GetKeyVal(key)
+	keyValData, err := KeyValDAL.GetKeyVal(key)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 	} else if keyValData != nil {
@@ -55,7 +61,7 @@ func getKeyVal(c *gin.Context) {
 }
 
 func getAllKeyVals(c *gin.Context) {
-	keyValArray, err := keyValDAL.GetAll()
+	keyValArray, err := KeyValDAL.GetAll()
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 	} else if keyValArray != nil {
@@ -69,7 +75,7 @@ func createKeyVal(c *gin.Context) {
 	var newKeyVal model.KeyValData
 
 	if c.BindJSON(&newKeyVal) == nil {
-		keyValData, err := keyValDAL.CreateKeyVal(newKeyVal.Key, newKeyVal.Value)
+		keyValData, err := KeyValDAL.CreateKeyVal(newKeyVal.Key, newKeyVal.Value)
 		if err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
 		} else if keyValData != nil {
@@ -96,7 +102,7 @@ func updateKeyVal(c *gin.Context) {
 			return
 		}
 
-		keyValData, err := keyValDAL.UpdateKeyVal(updateKeyVal.Key, updateKeyVal.Value)
+		keyValData, err := KeyValDAL.UpdateKeyVal(updateKeyVal.Key, updateKeyVal.Value)
 		if err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
 		} else if keyValData != nil {
@@ -109,7 +115,7 @@ func updateKeyVal(c *gin.Context) {
 
 func deleteKeyVal(c *gin.Context) {
 	key := c.Param("key")
-	deleted, err := keyValDAL.DeleteKeyVal(key)
+	deleted, err := KeyValDAL.DeleteKeyVal(key)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 	} else if deleted == false {

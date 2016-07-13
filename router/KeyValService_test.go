@@ -41,7 +41,7 @@ func (m *mockedKeyValDAL) DeleteKeyVal(key string) (bool, error){
 //-----------------------------
 
 func TestCreate(t *testing.T) {
-	keyValDAL = new(mockedKeyValDAL)
+	KeyValDAL = new(mockedKeyValDAL)
 
 	r := gin.Default()
 	r.POST("/key", createKeyVal)
@@ -64,7 +64,7 @@ func TestCreate(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-	keyValDAL = new(mockedKeyValDAL)
+	KeyValDAL = new(mockedKeyValDAL)
 
 	r := gin.Default()
 	r.PUT("/key/:key", updateKeyVal)
@@ -88,7 +88,7 @@ func TestUpdate(t *testing.T) {
 
 func TestGetKeyVal(t *testing.T) {
 	//Mock DAL for testing service
-	keyValDAL = new(mockedKeyValDAL)
+	KeyValDAL = new(mockedKeyValDAL)
 
 	r := gin.Default()
 	r.GET("/key/:key", getKeyVal)
@@ -105,7 +105,7 @@ func TestGetKeyVal(t *testing.T) {
 }
 
 func TestGetAll(t *testing.T) {
-	keyValDAL = new(mockedKeyValDAL)
+	KeyValDAL = new(mockedKeyValDAL)
 	r := gin.Default()
 	r.GET("/keys", getKeyVal)
 	req, err := http.NewRequest("GET", "/keys", nil)
@@ -121,7 +121,7 @@ func TestGetAll(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	keyValDAL = new(mockedKeyValDAL)
+	KeyValDAL = new(mockedKeyValDAL)
 	r := gin.Default()
 	r.DELETE("/key/:key", deleteKeyVal)
 	req, err := http.NewRequest("DELETE", "/key/hello", nil)

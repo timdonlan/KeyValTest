@@ -1,89 +1,98 @@
 package main
 
 import (
-	"flag"
 	"net/http"
 	"testing"
-	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http/httptest"
-	"os"
-	"time"
+	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"KeyValTest/router"
+	"KeyValTest/model"
+	"bytes"
+	"encoding/json"
+	"strings"
 )
 
-func initTestingFlags() {
-	sqliteDbName = flag.String("sqliteDbName", "default.db", "Filename of SQLite database")
-	hostingPort = flag.Int("hostingPort", 8088, "Default hosting port for the service")
+func testPOST(t *testing.T, url string, body []byte, respStatus int, rspBody []byte){
+	resp, err := http.Post(url,"application/json", bytes.NewBuffer(body))
+	defer resp.Body.Close()
+	assert.NoError(t, err)
+	body, ioerr := ioutil.ReadAll(resp.Body)
+	assert.NoError(t, ioerr)
+	assert.Equal(t, strings.TrimSpace(string(rspBody)),strings.TrimSpace(string(body)), "resp body should match")
+	assert.Equal(t,respStatus, resp.StatusCode, "StatusCodes did not match")
 }
 
-func cleanupTests() {
-	os.Remove(*sqliteDbName)
+func testGET(t *testing.T, url string, respStatus int, rspBody []byte){
+	resp, err := http.Get(url)
+	defer resp.Body.Close()
+	assert.NoError(t, err)
+	body, ioerr := ioutil.ReadAll(resp.Body)
+	assert.NoError(t, ioerr)
+	assert.Equal(t, strings.TrimSpace(string(rspBody)), strings.TrimSpace(string(body)), "resp body should match")
+	assert.Equal(t,respStatus, resp.StatusCode, "StatusCodes did not match")
 }
 
-func TestFoo(t *testing.T) {
-	handler := func(c *gin.Context) {
-		c.String(http.StatusOK, "bar")
-	}
-
-	router := gin.New()
-	router.GET("/foo", handler)
-
-	req, _ := http.NewRequest("GET", "/foo", nil)
-	resp := httptest.NewRecorder()
-	router.ServeHTTP(resp, req)
-
-	fmt.Print(resp.Body.String())
-
-	//assert.Equal(t, resp.Body.String(), "bar")
-}
-
-func TestStartService(t *testing.T) {
-	initTestingFlags()
-	go StartService()
-
-	time.Sleep(10 * time.Millisecond) //hack to wait till service starts.
-	url := "http://localhost:8088/health"
-
-	//call http, check response
-	response, err := http.Get(url)
+func testPUT(t *testing.T, url string, body []byte, respStatus int, rspBody []byte){
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(body))
 	if err != nil {
 		t.Error(err)
 	}
-
-	if response == nil {
-		t.Error("Empty response")
-	}
-
-	//stop service, delete temp db file.
-	cleanupTests()
+	req.Header.Set("Content-Type", "application/json")
+	resp,err := http.DefaultClient.Do(req)
+	defer resp.Body.Close()
+	assert.NoError(t, err)
+	body, ioerr := ioutil.ReadAll(resp.Body)
+	assert.NoError(t, ioerr)
+	assert.Equal(t, strings.TrimSpace(string(rspBody)), strings.TrimSpace(string(body)), "resp body should match")
+	assert.Equal(t,respStatus, resp.StatusCode, "StatusCodes did not match")
 }
 
-/*
-func TestGetKey(t *testing.T){
-	//initTestingFlags()
 
-	//insert key
-	model.Connect(*sqliteDbName)
-	model.CreateKeyVal("test","foo")
 
-	go StartService()
-
-	time.Sleep(10* time.Millisecond) //hack to wait till service starts.
-	url := "http://localhost:8088/key/test"
-
-	//call http, check response
-	response, err := http.Get(url)
+func testDELETE(t *testing.T, url string, respStatus int, rspBody string){
+	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		t.Error(err)
 	}
-
-	if response == nil{
-		t.Error("Empty response")
-	}
-
-	//stop service, delete temp db file.
-	cleanupTests()
-
+	req.Header.Set("Content-Type", "application/json")
+	resp,err := http.DefaultClient.Do(req)
+	defer resp.Body.Close()
+	assert.NoError(t, err)
+	body, ioerr := ioutil.ReadAll(resp.Body)
+	assert.NoError(t, ioerr)
+	assert.Equal(t, strings.TrimSpace(string(rspBody)), strings.TrimSpace(string(body)), "resp body should match")
+	assert.Equal(t,respStatus, resp.StatusCode, "StatusCodes did not match")
 }
 
-*/
+
+func TestHttpServer(t *testing.T) {
+
+	dbName := "default.db"
+
+	//Setup backend db
+	model.ResetDB(dbName)
+	defer model.CleanDB(dbName)
+	router.KeyValDAL = model.OpenDB(dbName)
+
+	//Start test server
+	r := router.CreateServiceHandlers()
+	ts := httptest.NewServer(r)
+	defer ts.Close()
+
+	jsonData := &model.KeyValData{"hello","world"}
+	jsonStr,_ := json.Marshal(jsonData)
+	testPOST(t,ts.URL+"/key",jsonStr,200,jsonStr)
+
+	testGET(t,ts.URL+"/key/hello",200,jsonStr)
+
+	jsonData = &model.KeyValData{"hello","world2"}
+	jsonStr,_ = json.Marshal(jsonData)
+	testPUT(t,ts.URL+"/key/hello",jsonStr,200,jsonStr)
+
+	testGET(t,ts.URL+"/key/hello",200,jsonStr)
+
+	testDELETE(t,ts.URL+"/key/hello",200,"true")
+
+	testGET(t,ts.URL+"/key/hello",500, []byte("{\"error\":\"sql: no rows in result set\"}"))
+}
